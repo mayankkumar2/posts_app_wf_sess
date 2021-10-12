@@ -1,0 +1,5 @@
+runtime: python39
+env_variables:
+instance_class: F1
+entrypoint: |-
+  uvicorn main:app --port 8080
