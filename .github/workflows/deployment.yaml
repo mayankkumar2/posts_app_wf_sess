@@ -45,3 +45,27 @@ jobs:
           DATABASE_URL: 'postgresql://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/postgres'
         run: |
           python -m pytest
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+      - name: Adding env variables to app.yaml
+        run: |
+          wget https://github.com/mikefarah/yq/releases/download/v4.13.4/yq_linux_amd64.tar.gz
+          tar -xvf yq_linux_amd64.tar.gz
+          mv yq_linux_amd64 yq
+          ./yq eval ".env_variables.DATABASE_URL = \"${{ secrets.DATABASE_URL }}\"" app.yaml > config.yaml
+          mv config.yaml app.yaml
+          cat app.yaml
+          rm yq yq_linux_amd64.tar.gz
+      - name: Deploy to App Engine
+        uses: google-github-actions/deploy-appengine@v0.4.0
+        with:
+          deliverables: app.yaml
+          project_id:  ${{ secrets.PROJECT_ID }}
+          credentials: ${{ secrets.SA_STAGING_KEY }}
+          promote: false
+          version: v1
