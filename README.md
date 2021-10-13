@@ -10,7 +10,7 @@
 - Clone the repo using
 
 ```bash
-git clone https://github.com/mdhishaamakhtar/fastapi-sqlalchemy-postgres-template
+git clone https://github.com/mayankkumar2/posts_app_wf_sess
 ```
 
 - Create a Virtual Environment using
